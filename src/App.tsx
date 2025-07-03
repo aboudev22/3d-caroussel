@@ -12,23 +12,17 @@ export default function App() {
     <div className="relative w-screen h-screen bg-white flex justify-center items-center overflow-hidden">
       <div
         ref={containerRef}
-        className="w-full py-10 px-10 overflow-x-scroll flex gap-6 items-center hide-scrollbar"
+        className="w-full py-10 px-[30vw] overflow-x-scroll flex gap-6 items-center hide-scrollbar snap-x snap-mandatory"
         style={{ perspective: "1000px" }}
       >
-        {Array.from({ length: 12 }).map((_, i) => {
-          // Position relative de chaque carte dans le conteneur
-          const start = i / 12;
-          const end = (i + 1) / 12;
-
-          return (
-            <Card3D
-              key={i}
-              index={i}
-              scrollProgress={scrollXProgress}
-              range={[start, end]}
-            />
-          );
-        })}
+        {Array.from({ length: 12 }).map((_, i) => (
+          <Card3D
+            key={i}
+            index={i}
+            scrollProgress={scrollXProgress}
+            totalItems={12}
+          />
+        ))}
       </div>
     </div>
   );
@@ -37,42 +31,46 @@ export default function App() {
 const Card3D = ({
   index,
   scrollProgress,
-  range,
+  totalItems,
 }: {
   index: number;
   scrollProgress: MotionValue<number>;
-  range: [number, number];
+  totalItems: number;
 }) => {
-  // Rotation basée sur la position dans le scroll
+  // Calcul de la position centrale relative
+  const centerPos = index / totalItems;
+
+  // Rotation progressive basée sur la distance au centre
   const rotateY = useTransform(
     scrollProgress,
-    [range[0], (range[0] + range[1]) / 2, range[1]],
-    [-45, 0, 45]
+    [0, 1],
+    [-60 - centerPos * 120, 60 + (1 - centerPos) * 120],
+    { clamp: false }
   );
 
-  // Hauteur basée sur la position
+  // Effets secondaires
   const height = useTransform(
     scrollProgress,
-    [range[0], (range[0] + range[1]) / 2, range[1]],
-    [220, 200, 220]
+    [centerPos - 0.3, centerPos, centerPos + 0.3],
+    [300, 200, 300]
   );
 
-  // Scale pour l'effet de perspective
-  const scale = useTransform(
+  const opacity = useTransform(
     scrollProgress,
-    [range[0], (range[0] + range[1]) / 2, range[1]],
-    [0.9, 1, 0.9]
+    [centerPos - 0.4, centerPos - 0.2, centerPos + 0.2, centerPos + 0.4],
+    [0.6, 1, 1, 0.6]
   );
 
   return (
     <motion.div
-      className="flex items-center justify-center flex-none bg-red-200 w-52 rounded-xl shadow-md"
+      className="flex items-center justify-center flex-none bg-red-200 w-52 rounded-xl shadow-lg snap-center"
       style={{
         rotateY,
         height,
-        scale,
+        opacity,
         transformStyle: "preserve-3d",
       }}
+      whileHover={{ scale: 1.05 }}
     >
       <p className="text-xl font-semibold">item {index}</p>
     </motion.div>
