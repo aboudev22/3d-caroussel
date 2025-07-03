@@ -15,7 +15,7 @@ export default function App() {
 
       const maxAngle = 45;
       const maxDistance = window.innerWidth / 2;
-      const minHeight = 208; // ≈ 52 * 4 (taille par défaut h-52 en px)
+      const minHeight = 208;
       const maxHeight = 240;
 
       const newTransforms = Array.from(cards).map((card) => {
@@ -23,12 +23,10 @@ export default function App() {
         const cardCenterX = rect.left + rect.width / 2;
         const distanceFromCenter = Math.abs(cardCenterX - screenCenterX);
 
-        // Angle Y (inversé pour effet visuel correct)
         const angle = (-(cardCenterX - screenCenterX) / maxDistance) * maxAngle;
         const clampedAngle = Math.max(Math.min(angle, maxAngle), -maxAngle);
 
-        // Hauteur : plus on s'éloigne du centre, plus on augmente
-        const t = Math.min(distanceFromCenter / maxDistance, 1); // valeur normalisée entre 0 et 1
+        const t = Math.min(distanceFromCenter / maxDistance, 1);
         const height = minHeight + (maxHeight - minHeight) * t;
 
         return { angle: clampedAngle, height };
