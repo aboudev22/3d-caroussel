@@ -15,8 +15,8 @@ export default function App() {
 
       const maxAngle = 45;
       const maxDistance = window.innerWidth / 2;
-      const minHeight = 208;
-      const maxHeight = 240;
+      const minHeight = 200;
+      const maxHeight = 220;
 
       const newTransforms = Array.from(cards).map((card) => {
         const rect = card.getBoundingClientRect();
@@ -49,7 +49,7 @@ export default function App() {
     <div className="relative w-screen h-screen bg-white flex justify-center items-center overflow-hidden">
       <div
         ref={containerRef}
-        className="w-full py-10 px-10 overflow-x-scroll flex gap-4 items-center"
+        className="w-full py-10 px-10 overflow-x-scroll flex gap-6 items-center"
         style={{
           perspective: "1000px",
         }}
