@@ -1,78 +1,42 @@
-import { motion, MotionValue, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
-
-export default function App() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollXProgress } = useScroll({
-    container: containerRef,
-    axis: "x",
-  });
-
+import React from "react";
+const App: React.FC = () => {
   return (
-    <div className="relative w-screen h-screen bg-white flex justify-center items-center overflow-hidden">
-      <div
-        ref={containerRef}
-        className="w-full py-10 px-[30vw] overflow-x-scroll flex gap-6 items-center hide-scrollbar snap-x snap-mandatory"
-        style={{ perspective: "1000px" }}
+    <div className="relative w-full">
+      {/* Masque SVG */}
+      <svg className="absolute inset-0 w-full h-full pointer-events-none">
+        <defs>
+          <clipPath id="clipCurve" clipPathUnits="objectBoundingBox">
+            <path
+              d="
+              M0,0.2 
+              Q0.5,0 1,0.2 
+              L1,0.8 
+              Q0.5,1 0,0.8 
+              Z
+            "
+            />
+          </clipPath>
+        </defs>
+      </svg>
+
+      <section
+        className="w-full bg-gradient-to-r h-64 from-pink-500 to-indigo-500 px-4 py-20 flex flex-wrap justify-center gap-6"
+        style={{ clipPath: "url(#clipCurve)" }}
       >
-        {Array.from({ length: 12 }).map((_, i) => (
-          <Card3D
-            key={i}
-            index={i}
-            scrollProgress={scrollXProgress}
-            totalItems={12}
-          />
+        {Array.from({ length: 6 }).map((_, i) => (
+          <Card key={i} title={`Card ${i + 1}`} />
         ))}
-      </div>
+      </section>
     </div>
   );
-}
+};
 
-const Card3D = ({
-  index,
-  scrollProgress,
-  totalItems,
-}: {
-  index: number;
-  scrollProgress: MotionValue<number>;
-  totalItems: number;
-}) => {
-  // Calcul de la position centrale relative
-  const centerPos = index / totalItems;
+export default App;
 
-  // Rotation progressive basée sur la distance au centre
-  const rotateY = useTransform(
-    scrollProgress,
-    [0, 1],
-    [-60 - centerPos * 120, 60 + (1 - centerPos) * 120],
-    { clamp: false }
-  );
-
-  // Effets secondaires
-  const height = useTransform(
-    scrollProgress,
-    [centerPos - 0.3, centerPos, centerPos + 0.3],
-    [300, 200, 300]
-  );
-
-  const opacity = useTransform(
-    scrollProgress,
-    [centerPos - 0.4, centerPos - 0.2, centerPos + 0.2, centerPos + 0.4],
-    [0.6, 1, 1, 0.6]
-  );
-
+const Card = ({ title }: { title: string }) => {
   return (
-    <motion.div
-      className="flex items-center justify-center flex-none bg-red-200 w-52 rounded-xl shadow-lg snap-center"
-      style={{
-        rotateY,
-        height,
-        opacity,
-        transformStyle: "preserve-3d",
-      }}
-      whileHover={{ scale: 1.05 }}
-    >
-      <p className="text-xl font-semibold">item {index}</p>
-    </motion.div>
+    <div className="w-48 h-full bg-white rounded-xl shadow-lg flex items-center justify-center text-lg font-semibold text-gray-800 hover:scale-105 transition-transform duration-300">
+      {title}
+    </div>
   );
 };
